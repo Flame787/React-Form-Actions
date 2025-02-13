@@ -60,7 +60,19 @@ export default function Signup() {
     if (errors.length > 0) {
       return {
         // errors: errors,   // key name is arbitrary, can be different
-        errors, // shortened: just 'errors'
+        // errors, // shortened: just 'errors'
+        // or better to add 2nd argument besides 'errors' - enteredValues, consisting of all input-values
+        errors,
+        enteredValues: {
+          email,
+          password,
+          confirmPassword,
+          firstName,
+          lastName,
+          role,
+          acquisitionChannel,
+          terms,
+        },
       };
     }
 
@@ -70,7 +82,9 @@ export default function Signup() {
   // adding new hook after the signupAction-function; the hook has the signupAction-function as 1st argument:
   // useActionState - a hook that manages some form-related state:
   // 2nd argument = initial state: { errors: null }
-  const [formState, formAction, pending] = useActionState(signupAction, { errors: null });
+  const [formState, formAction, pending] = useActionState(signupAction, {
+    errors: null,
+  });
   // useActionState returns an array with 3 elements:
   // 1st item in array = formState - initial state; values returned in the 1st hook run -> { errors: null }
   // 2nd item in array = an updated formAction; it is set as a value here: <form action={formAction}>
@@ -85,13 +99,30 @@ export default function Signup() {
 
       <div className="control">
         <label htmlFor="email">Email</label>
-        <input id="email" type="email" name="email" />
+        <input
+          id="email"
+          type="email"
+          name="email"
+          defaultValue={formState.enteredValues?.email}
+        />
+        {/* adding a defaultValue = some value, to which the value will be returned when the form is reset. */}
+        {/* we should first check if 'enteredValues' exists, by adding a ? -questionmark, so that JS only tries
+      to access this email-property if 'enteredValues' is a defined object. 
+      Otherwise - undefined, and when form is reset, the value will be set to empty input field. */}
       </div>
 
       <div className="control-row">
         <div className="control">
           <label htmlFor="password">Password</label>
-          <input id="password" type="password" name="password" />
+          <input
+            id="password"
+            type="password"
+            name="password"
+            defaultValue={formState.enteredValues?.password}
+          />
+          {/* adding  a defaultValue to all fields, so that, if user already has entered some input, and
+        clicked to submit the form, but there are still some other errors in validation od other fields,
+        when the form was 'reset', the entered values stay in fields, don't get lost. */}
         </div>
 
         <div className="control">
@@ -100,6 +131,7 @@ export default function Signup() {
             id="confirm-password"
             type="password"
             name="confirm-password"
+            defaultValue={formState.enteredValues?.confirmPassword}
           />
         </div>
       </div>
@@ -109,18 +141,32 @@ export default function Signup() {
       <div className="control-row">
         <div className="control">
           <label htmlFor="first-name">First Name</label>
-          <input type="text" id="first-name" name="first-name" />
+          <input
+            type="text"
+            id="first-name"
+            name="first-name"
+            defaultValue={formState.enteredValues?.firstName}
+          />
         </div>
 
         <div className="control">
           <label htmlFor="last-name">Last Name</label>
-          <input type="text" id="last-name" name="last-name" />
+          <input
+            type="text"
+            id="last-name"
+            name="last-name"
+            defaultValue={formState.enteredValues?.lastName}
+          />
         </div>
       </div>
 
       <div className="control">
         <label htmlFor="phone">What best describes your role?</label>
-        <select id="role" name="role">
+        <select
+          id="role"
+          name="role"
+          defaultValue={formState.enteredValues?.role}
+        >
           <option value="student">Student</option>
           <option value="teacher">Teacher</option>
           <option value="employee">Employee</option>
@@ -137,6 +183,9 @@ export default function Signup() {
             id="google"
             name="acquisition"
             value="google"
+            defaultChecked={formState.enteredValues?.acquisitionChannel.includes(
+              "google"
+            )}
           />
           <label htmlFor="google">Google</label>
         </div>
@@ -147,27 +196,47 @@ export default function Signup() {
             id="friend"
             name="acquisition"
             value="friend"
+            defaultChecked={formState.enteredValues?.acquisitionChannel.includes(
+              "friend"
+            )}
           />
           <label htmlFor="friend">Referred by friend</label>
         </div>
 
         <div className="control">
-          <input type="checkbox" id="other" name="acquisition" value="other" />
+          <input
+            type="checkbox"
+            id="other"
+            name="acquisition"
+            value="other"
+            defaultChecked={formState.enteredValues?.acquisitionChannel.includes(
+              "other"
+            )}
+          />
           <label htmlFor="other">Other</label>
         </div>
       </fieldset>
 
       <div className="control">
         <label htmlFor="terms-and-conditions">
-          <input type="checkbox" id="terms-and-conditions" name="terms" />I
-          agree to the terms and conditions
+          <input
+            type="checkbox"
+            id="terms-and-conditions"
+            name="terms"
+            defaultChecked={formState.enteredValues?.terms}
+          />
+          I agree to the terms and conditions
         </label>
       </div>
 
       {/* // conditionally outputting some error messages:  */}
-      {formState.errors && <ul className="error">
-        {formState.errors.map(error => <li key={error}>{error}</li>)}
-      </ul> }
+      {formState.errors && (
+        <ul className="error">
+          {formState.errors.map((error) => (
+            <li key={error}>{error}</li>
+          ))}
+        </ul>
+      )}
 
       <p className="form-actions">
         <button type="reset" className="button button-flat">
