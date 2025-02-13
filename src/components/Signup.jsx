@@ -78,6 +78,8 @@ export default function Signup() {
 
     return { errors: null }; // if we have no errors in array.
   }
+  // *we can also move the action-function outside of the component-function (even better for performance),
+  // but if we are using props and state, in that case action-function should stay inside of the component-function
 
   // adding new hook after the signupAction-function; the hook has the signupAction-function as 1st argument:
   // useActionState - a hook that manages some form-related state:
